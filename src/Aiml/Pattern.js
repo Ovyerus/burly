@@ -71,7 +71,7 @@ class Pattern {
         let matches = sentence.match(this.regex);
 
         if (matches &&
-         (matches[0].length >= sentence.length || this.text_pattern.indexOf(this.wildcard_regex) > -1)) {
+         (matches[0].length >= sentence.length || this.textPattern.indexOf(this.wildcard_regex) > -1)) {
             this.surly.environment.wildcardStack.push(this.getWildCardValues(sentence));
             return true;
         }
@@ -80,7 +80,7 @@ class Pattern {
     }
 
     getWildCardValues(sentence) {
-        let replaceArray = this.text_pattern.split('*');
+        let replaceArray = this.textPattern.split('*');
 
         if (replaceArray.length < 2) return this.surly.environment.wildcard_stack.getLast();
         for (let val of replaceArray) sentence = sentence.replace(val, '|');
@@ -94,7 +94,7 @@ class Pattern {
             chunk = chunk.trim();
 
             if (chunk === '') continue;
-            if (chunk.slice(-1) === '?') chunk = chunk.substr(0, chunk.length - 1);
+            if (chunk.endsWith('?')) chunk = chunk.slice(0, -1);
 
             output.push(chunk);
         }

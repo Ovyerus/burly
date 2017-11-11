@@ -89,7 +89,8 @@ class Aiml {
             sentence = this.normaliseSentence(sentence);
             let match = this.categories.find(cat => cat.match(sentence));
 
-            resolve(match);
+            if (!match) return reject(new Error('No matching category found.'));
+            else resolve(match);
         });
     }
 

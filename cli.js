@@ -52,20 +52,3 @@ process.stdin.on('data', data => {
         process.exit(1);
     });
 });
-
-/*
-
-process.stdin.addListener('data', function (d) {
-	var sentence = d.toString().substring(0, d.length - 1);
-
-	if (sentence === 'quit' || sentence === 'exit') {
-		console.log('Yeah, fuck off.');
-		process.exit(0);
-	}
-
-  bot.talk(sentence, function (err, response) {
-    console.log('Surly: ' + response);
-    process.stdout.write(prompt);
-  });
-});
-*/
