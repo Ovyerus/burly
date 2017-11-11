@@ -1,6 +1,4 @@
-"use strict";
-
-var BaseNode = require('../BaseNode');
+const BaseNode = require('../BaseNode');
 
 /**
  * From AIML Spec
@@ -14,15 +12,16 @@ var BaseNode = require('../BaseNode');
  * <!-- Category: aiml-template-elements -->
  * <aiml:sr/>
  */
-module.exports = class Sr extends BaseNode {
-  constructor (node, surly) {
-    super(node, surly);
-    this.type = 'sr';
-    this.surly = surly;
-  }
+class Sr extends BaseNode {
+    constructor(node, surly) {
+        super(node, surly);
+        this.type = 'sr';
+    }
 
-  getText (callback) {
-    var star = this.surly.environment.wildcard_stack.getLast();
-    this.surly.talk(star[0], callback);
-  }
-};
+    getText() {
+        let star = this.surly.environment.wildcardStack.getLast();
+        this.surly.talk(star[0]);
+    }
+}
+
+module.exports = Sr;

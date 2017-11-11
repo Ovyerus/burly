@@ -1,6 +1,4 @@
-"use strict";
-
-var BaseNode = require('../BaseNode');
+const BaseNode = require('../BaseNode');
 
 /**
  * From AIML Spec
@@ -28,33 +26,27 @@ var BaseNode = require('../BaseNode');
  * <!-- Category: aiml-template-elements -->
  * <aiml:input index = (single-integer-index | comma-separated-integer-pair) />
  */
-module.exports = class That extends BaseNode {
-  constructor (node, surly) {
-    var index;
+class That extends BaseNode {
+    constructor(node, surly) {
+        let index;
 
-    super(node, surly);
-    this.type = 'that';
+        super(node, surly);
+        this.type = 'that';
 
-    if (node.attr('index') === null) {
-      index = '1,1';
-    } else {
-      index = node
-        .attr('index')
-        .value();
+        if (node.attr('index') === null) index = '1,1';
+        else index = node.attr('index').value();
+
+        index = index.split(',');
+
+        if (index.length === 2) this.sentence = parseInt(index[1], 10);
+        else this.sentence = 1;
+
+        this.index = parseInt(index[0], 10);
     }
 
-    index = index.split(',');
-
-    if (index.length === 2) {
-      this.sentence = parseInt(index[1], 10);
-    } else {
-      this.sentence = 1;
+    getText() {
+        return this.surly.environment.getPreviousInput(this.index, this.sentence);
     }
+}
 
-    this.index = parseInt(index[0], 10);
-  }
-
-  getText (callback) {
-    callback(null, this.surly.environment.getPreviousInput(this.index, this.sentence));
-  }
-};
+module.exports = That;

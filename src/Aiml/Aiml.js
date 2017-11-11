@@ -1,184 +1,163 @@
-"use strict";
-
 const fs = require('fs');
-const async = require('async');
-const BaseNode = require('./BaseNode');
 const libxmljs = require('libxmljs');
 const Category = require('./Category');
-const debug = require('debug')('surly2');
 
 /**
 * Main AIML handler. Contains a list of category nodes, potentially loaded
 * from multiple files.
 */
-module.exports = class Aiml {
-  constructor (options) {
-    this.surly = options.surly;
-    this.wipe();
-    this.categories = [];
-  }
-
-  /**
-   * Remove all loaded data from memory and set up defaults. Called when Aiml
-   * object is initialised
-   */
-  wipe () {
-    this.categories = [];
-    this.topics = ['*'];
-  }
-
-  /**
-   * Load an AIML string
-   * @param {String} aiml    A whole AIML file
-   */
-  parseAiml (aiml) {
-    var xmlDoc = libxmljs.parseXmlString(aiml),
-      topics = xmlDoc.find('topic'),
-      categories,
-      topic_name,
-      topic_cats,
-      i, j;
-
-    // Handle topic cats first - they should be matched first
-    for (i = 0; i < topics.length; i++) {
-      topic_name = topics[i].attr('name').value();
-      topic_cats = topics[i].find('category');
-
-      for (j = 0; j < topic_cats.length; j++) {
-        this.categories.push(new Category(topic_cats[j], this.surly, topic_name));
-      }
+class Aiml {
+    constructor(surly) {
+        this.surly = surly;
+        this.wipe();
     }
 
-    categories = xmlDoc.find('category');
-    debug('Parsing ' + this.categories.length + ' categories.');
-
-    for (i = 0; i < categories.length; i++) {
-      this.categories.push(new Category(categories[i], this.surly));
+    /**
+     * Remove all loaded data from memory and set up defaults. Called when Aiml
+     * object is initialised
+     */
+    wipe() {
+        this.categories = [];
+        this.topics = ['*'];
     }
 
-    this.showCategories();
-  }
+    /**
+     * Load an AIML string
+     * @param {String} aiml A whole AIML file
+     */
+    parseAiml(aiml) {
+        /*var xmlDoc = libxmljs.parseXmlString(aiml),
+            topics = xmlDoc.find('topic'),
+            categories,
+            topic_name,
+            topic_cats,
+            i, j;*/
+        let doc = libxmljs.parseXmlString(aiml);
+        let topics = doc.find('topic');
 
-  /**
-   * List out all loaded categories and their topics. For debugging.
-   */
-  showCategories () {
-    for (var i = 0; i < this.categories.length; i++) {
-      debug(' - ' + this.categories[i].pattern.text_pattern);
-    }
-  }
+        // Handle topic cats first - they should be matched first
+        for (let topic of topics) {
+            let topicName = topic.attr('name').value();
+            let topicCats = topic.find('category');
 
-  /**
-   * Simple check to see if any data has been loaded
-   * @return {Boolean} True if data has been loaded
-   */
-  hasData () {
-    return this.categories.length > 0;
-  }
+            for (let cat of topicCats) this.categories.push(new Category(cat, this.surly, topicName));
+        }
 
-  /**
-   * Give a sentence and get a response
-   */
-  getResponse(sentence, callback) {
-    var template = this.findMatchingCategory(sentence, function (category) {
+        let categories = doc.find('category');
 
-      if (category) {
-        var template = category.getTemplate();
-        template.getText(callback);
-      } else {
-        callback('No match.', 'Fuck knows.');
-      }
-    }.bind(this));
-  }
-
-  /**
-   * Loop through loaded AIML and return the `template` from the first `category`
-   * with a `pattern` that matches `sentence`.
-   * @param {String} sentence    Text input from user
-   */
-  findMatchingCategory (sentence, foundCatCallback) {
-    if (!this.hasData()) {
-      throw 'No data loaded.';
+        for (let cat of categories) this.categories.push(new Category(cat, this.surly));
+        //this.showCategories();
     }
 
-    sentence = this.normaliseSentence(sentence);
-
-    async.detectSeries(this.categories, function (item, callback) {
-      item.match(sentence, callback);
-    }, function (matchingCategory) { // Shouldn't there be err here? What?!
-      foundCatCallback(matchingCategory);
-    });
-  }
-
-  /**
-   * Find files in a dir and run loadAimlFile on them
-   * @param  {String} dir
-   * @return {Undefined}
-   */
-  loadDir (dir, callback) {
-    var files = fs.readdirSync(dir);
-
-    debug('Loading dir' + dir);
-
-    for (var i in files) {
-      if (!files.hasOwnProperty(i)) continue;
-
-      var name = dir + '/' + files[i];
-
-      if (fs.statSync(name).isDirectory()) {
-        debug('Ignoring directory: ' + name);
-      } else if (name.substr(-5).toLowerCase() === '.aiml') {
-        this.loadFile(name, callback);
-      }
-    }
-  }
-
-  /**
-   * Load an AIML file
-   * @param  {String} file
-   * @return {Undefined}
-   */
-  loadFile (file, callback) {
-    debug('Loading file: ' + file);
-    fs.readFile(file, 'utf8', function (err, xml) {
-      if (err) {
-        throw 'Failed to load AIML file. ' + err;
-      }
-
-      this.parseAiml(xml);
-    }.bind(this));
-  }
-
-  /**
-   * Perform input normalisation. See AIML spec section 8.3
-   * Should (but doesn't yet) include:
-   *  - Substitution normalisations
-   *  - Sentence-splitting normalisations
-   *  - Pattern-fitting normalisations
-   * @todo - check against spec
-   *
-   * @param  {[type]} sentence [description]
-   * @return {[type]}          [description]
-   */
-  normaliseSentence (sentence) {
-    debug('normalising ', sentence);
-
-    // add spaces to prevent false positives
-    if (sentence.charAt(0) !== ' ') {
-      sentence = ' ' + sentence;
+    /**
+     * List out all loaded categories and their topics. For debugging.
+     */
+    showCategories() {
+        for (let cat of this.categories) console.log(' - ' + cat.pattern.textPattern);
     }
 
-    // Remove trailing punctuation - @todo use regex!
-    while (['!', '.', '?'].indexOf(sentence.charAt(sentence.length -1)) !== -1) {
-      sentence = sentence.substr(0, sentence.length - 1);
+    /**
+     * Simple check to see if any data has been loaded
+     * @returns {Boolean} True if data has been loaded
+     */
+    hasData() {
+        return !!this.categories.length;
     }
 
-    if (sentence.charAt(sentence.length - 1) !== ' ') {
-      sentence = sentence + ' ';
+    /**
+     * Give a sentence and get a response.
+     * 
+     * @param {String} sentence Sentence to get a response for.
+     * @returns {Promise<String>} .
+     */
+    getResponse(sentence) {
+        return this.findMatchingCategory(sentence).then(cat => {
+            return cat.getTemplate().getText();
+        });
     }
 
-    sentence = sentence.toUpperCase(); // @todo - remove this
+    /**
+     * Loop through loaded AIML and return the `template` from the first `category`
+     * with a `pattern` that matches `sentence`.
+     * @param {String} sentence Sentence to find a matching category for.
+     * @returns {Promise<*>} .
+     */
+    findMatchingCategory(sentence) {
+        return new Promise((resolve, reject) => {
+            if (!this.hasData()) return reject(new Error('No data loaded.'));
 
-    return sentence;
-  }
-};
+            sentence = this.normaliseSentence(sentence);
+            let match = this.categories.find(cat => cat.match(sentence));
+
+            resolve(match);
+        });
+    }
+
+    /**
+     * Loads all files in a given directory.
+     * 
+     * @param {String} dir Directory to load files from.
+     * @returns {Promise} Resolves if all files load successfully, otherwise rejects.
+     */
+    loadDir(dir) {
+        return new Promise((resolve, reject) => {
+            let collect = [];
+
+            fs.readdir(dir, (err, files) => {
+                if (err) return reject(err);
+
+                for (let file of files) {
+                    let full = `${dir}/${file}`;
+
+                    if (fs.statSync(full).isDirectory()) continue;
+                    else if (full.toLowerCase().endsWith('.aiml')) collect.push(this.loadFile(full));
+                }
+
+                resolve(Promise.all(collect));
+            });
+        });
+    }
+
+    /**
+     * Loads a given AIML file.
+     * 
+     * @param {String} file File to load.
+     * @returns {Promise} .
+     */
+    loadFile(file) {
+        return new Promise((resolve, reject) => {
+            fs.readFile(file, 'utf8', (err, data) => {
+                if (err) return reject(err);
+                else {
+                    this.parseAiml(data);
+                    resolve();
+                }
+            });
+        });
+    }
+
+    /**
+     * Perform input normalisation. See AIML spec section 8.3
+     * Should (but doesn't yet) include:
+     *  - Substitution normalisations
+     *  - Sentence-splitting normalisations
+     *  - Pattern-fitting normalisations
+     * @todo - check against spec
+     *
+     * @param {String} sentence Sentence to normalise.
+     * @returns {String} Normalised sentence.
+     */
+    normaliseSentence(sentence) {
+        // add spaces to prevent false positives
+        if (sentence.startsWith(' ')) sentence = ' ' + sentence;
+
+        // Remove trailing punctuation - @todo use regex!
+        while (['!', '.', '?'].includes(sentence.slice(-1))) sentence = sentence.slice(0, -1);
+
+        if (!sentence.endsWith(' ')) sentence += ' ';
+
+        return sentence;
+    }
+}
+
+module.exports = Aiml;

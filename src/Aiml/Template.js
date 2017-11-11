@@ -1,5 +1,3 @@
-"use strict";
-
 const BaseNode = require('./BaseNode');
 
 /**
@@ -19,4 +17,6 @@ const BaseNode = require('./BaseNode');
  * zero or more AIML template elements mixed with character data. The elements
  * described below are grouped for convenience.
  */
-module.exports = class Template extends BaseNode {};
+class Template extends BaseNode {}
+
+module.exports = Template;

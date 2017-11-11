@@ -1,6 +1,4 @@
-"use strict";
-
-var BaseNode = require('../BaseNode');
+const BaseNode = require('../BaseNode');
 
 /**
  * From AIML Spec
@@ -16,10 +14,15 @@ var BaseNode = require('../BaseNode');
  *    <!-- Contents: default-list-item+ -->
  * </aiml:random>
  */
-module.exports = class Random extends BaseNode {
-  getText (callback) {
-    var elem = this.children[Math.floor(Math.random() * this.children.length)];
+class Random extends BaseNode {
+    constructor(node, surly) {
+        super(node, surly);
+        this.type = 'random';
+    }
 
-    elem.getText(callback);
-  }
-};
+    getText() {
+        return this.children[Math.floor(Math.random() * this.children.length)].getText();
+    }
+}
+
+module.exports = Random;

@@ -1,6 +1,4 @@
-"use strict";
-
-var BaseNode = require('../BaseNode');
+const BaseNode = require('../BaseNode');
 
 /**
  * From AIML Spec
@@ -15,13 +13,15 @@ var BaseNode = require('../BaseNode');
  * <!-- Category: aiml-template-elements -->
  * <aiml:date/>
  */
-module.exports = class DateNode extends BaseNode {
-  constructor(node, surly) {
-    super(node, surly);
-    this.type = 'date';
-  }
+class DateNode extends BaseNode {
+    constructor(node, surly) {
+        super(node, surly);
+        this.type = 'date';
+    }
 
-  getText(callback) {
-    callback(false, new Date().toISOString()); // @todo - nice formatting
-  }
-};
+    getText() {
+        return new Date().toISOString(); // @todo - nice formatting
+    }
+}
+
+module.exports = DateNode;

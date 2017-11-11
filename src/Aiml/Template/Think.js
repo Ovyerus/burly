@@ -1,6 +1,4 @@
-"use strict";
-
-var BaseNode = require('../BaseNode');
+const BaseNode = require('../BaseNode');
 
 /**
  * From AIML Spec
@@ -18,15 +16,16 @@ var BaseNode = require('../BaseNode');
  *    <!-- Contents: aiml-template-elements -->
  * </aiml:think>
  */
-module.exports = class Think extends BaseNode{
-  constructor (node, surly) {
-    super(node, surly);
-    this.type = 'think';
-  }
+class Think extends BaseNode {
+    constructor(node, surly) {
+        super(node, surly);
+        this.type = 'think';
+    }
 
-  getText (callback) {
-    super.evaluateChildren(function (err, text) {
-      callback(null, '');
-    }.bind(this));
-  }
-};
+    getText() {
+        this.evaluateChildren();
+        return '';
+    }
+}
+
+module.exports = Think;

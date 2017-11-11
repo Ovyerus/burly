@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * From AIML Spec
  * http://www.alicebot.org/TR/2001/WD-aiml/#section-pattern
@@ -17,118 +15,92 @@
  *    <!-- Content: aiml-pattern-expression -->
  * </aiml:pattern>
  */
-module.exports = class Pattern {
-  constructor (pattern, surly) {
-    this.surly = surly;
-    this.wildcard_regex = ' ([A-Z|0-9|\\s]*[A-Z|0-9|-]*[A-Z|0-9]*[!|.|?|\\s]*)';
-    this.text_pattern = pattern.text();
-    this.regex = this.patternToRegex(this.text_pattern);
-  }
-
-  /**
-  * Match the pattern against a given sentence
-  * @param  {String} sentence Input from user
-  * @return {Boolean}         True if sentence and pattern match
-  */
-  matchSentence (sentence) {
-    // Add spaces to prevent false positives
-    if (sentence.charAt(0) !== ' ') {
-      sentence = ' ' + sentence;
+class Pattern {
+    constructor(pattern, surly) {
+        this.surly = surly;
+        this.wildcardRegex = ' ([A-Z|0-9|\\s]*[A-Z|0-9|-]*[A-Z|0-9]*[!|.|?|\\s]*)';
+        this.textPattern = pattern.text();
+        this.regex = this.patternToRegex(this.textPattern);
     }
 
-    if (sentence.charAt(sentence.length - 1) !== ' ') {
-      sentence = sentence + ' ';
+    /**
+     * Match the pattern against a given sentence
+     * @param {String} sentence Input from user
+     * @returns {Boolean} True if sentence and pattern match
+     */
+    matchSentence(sentence) {
+        // Add spaces to prevent false positives
+        if (sentence.startsWith(' ')) sentence = ' ' + sentence;
+        if (sentence.endsWith(' ')) sentence +=  ' ';
+
+        sentence = sentence.toUpperCase();
+        let matches = sentence.match(this.regex);
+
+        if (matches &&
+         (matches[0].length >= sentence.length || this.regex.indexOf(this.wildcard_regex) > -1)) {
+            this.surly.environment.wildcardStack.push(this.getWildCardValues(sentence, this));
+            return true;
+        }
+
+        return false;
     }
 
-    sentence = sentence.toUpperCase();
+    /**
+     * Convert a string with wildcards (*s) to regex
+     * @param {String} pattern The string with wildcards
+     * @returns {String} The altered string
+     */
+    patternToRegex(pattern) {
+        // add spaces to prevent e.g. foo matching food
+        if (pattern.startsWith('*')) pattern = ' ' + pattern;
 
-    // var regex_pattern = this.aimlPatternToRegex(pattern);
-    var matches = sentence.match(this.regex);
+        // remove spaces before *s and replace wildcards with regex
+        pattern = pattern.replace(' *', '*').replace(/\*/g, this.wildcard_regex);
 
-    if (matches &&
-      (matches[0].length >= sentence.length || this.regex.indexOf(this.wildcard_regex) > -1)) {
-        this.surly.environment.wildcard_stack.push(this.getWildCardValues(sentence, this));
-      return true;
+        if (!pattern.endsWith('*')) pattern += '[\\s|?|!|.]*';
+
+        return new RegExp(pattern, 'g');
     }
 
-    return false;
-  }
+    /**
+     * Compare the pattern to given sentence
+     * @param {String} sentence Sentence to compare
+     * @returns {Boolean} True if sentence and pattern match
+     */
+    compare(sentence) {
+        let matches = sentence.match(this.regex);
 
-  /**
-  * Convert a string with wildcards (*s) to regex
-  * @param  String pattern The string with wildcards
-  * @return String      The altered string
-  */
-  patternToRegex (pattern) {
-    var lastChar,
-    firstChar = pattern.charAt(0);
+        if (matches &&
+         (matches[0].length >= sentence.length || this.text_pattern.indexOf(this.wildcard_regex) > -1)) {
+            this.surly.environment.wildcardStack.push(this.getWildCardValues(sentence));
+            return true;
+        }
 
-    // add spaces to prevent e.g. foo matching food
-    if (firstChar != '*') {
-      pattern = ' ' + pattern;
+        return false;
     }
 
-    var lastCharIsStar = pattern.charAt(pattern.length - 1) === '*';
+    getWildCardValues(sentence) {
+        let replaceArray = this.text_pattern.split('*');
 
-    // remove spaces before *s
-    pattern = pattern.replace(' *', '*');
+        if (replaceArray.length < 2) return this.surly.environment.wildcard_stack.getLast();
+        for (let val of replaceArray) sentence = sentence.replace(val, '|');
 
-    // replace wildcards with regex
-    pattern = pattern.replace(/\*/g, this.wildcard_regex);
+        // Split by pipe and we're left with values and empty strings
+        sentence = sentence.trim().split('|');
 
-    if (!lastCharIsStar) {
-      pattern = pattern + '[\\s|?|!|.]*';
+        let output = [];
+
+        for (let chunk of sentence) {
+            chunk = chunk.trim();
+
+            if (chunk === '') continue;
+            if (chunk.slice(-1) === '?') chunk = chunk.substr(0, chunk.length - 1);
+
+            output.push(chunk);
+        }
+
+        return output;
     }
+}
 
-    return new RegExp(pattern, 'g');
-  }
-
-  /**
-  * Compare the pattern to given sentence
-  * @param  {String}  sentence
-  * @return {Boolean}          True if sentence and pattern match
-  */
-  compare (sentence) {
-    var matches = sentence.match(this.regex);
-
-    if (matches &&
-      (matches[0].length >= sentence.length || this.text_pattern.indexOf(this.wildcard_regex) > -1)) {
-        this.surly.environment.wildcard_stack.push(this.getWildCardValues(sentence));
-      return true;
-    }
-
-    return false;
-  }
-
-  getWildCardValues (sentence) {
-    var replace_array = this.text_pattern.split('*');
-
-    if (replace_array.length < 2) {
-      return this.surly.environment.wildcard_stack.getLast();
-    }
-
-    for (var i = 0; i < replace_array.length; i++) {
-      sentence = sentence.replace(replace_array[i], '|');
-    }
-
-    // split by pipe and we're left with values and empty strings
-    sentence = sentence.trim().split('|');
-
-    var output = [];
-    var chunk = '';
-
-    for (i = 0; i < sentence.length; i++) {
-      chunk = sentence[i].trim();
-
-      if (chunk === '') continue;
-
-      if (chunk.charAt(chunk.length - 1) === '?') {
-        chunk = chunk.substr(0, chunk.length - 1);
-      }
-
-      output.push(chunk);
-    }
-
-    return output;
-  }
-};
+module.exports = Pattern;

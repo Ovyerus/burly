@@ -1,6 +1,4 @@
-"use strict";
-
-var BaseNode = require('../BaseNode');
+const BaseNode = require('../BaseNode');
 
 /**
  * From AIML Spec
@@ -27,9 +25,11 @@ var BaseNode = require('../BaseNode');
  *    <!-- Content: aiml-pattern-expression -->
  * </aiml:that>
  */
-module.exports = class PatternThat extends BaseNode {
-  constructor (node, surly, category) {
-    super(node, surly);
-    this.category = category;
-  }
-};
+class PatternThat extends BaseNode {
+    constructor(node, surly, category) {
+        super(node, surly);
+        this.category = category;
+    }
+}
+
+module.exports = PatternThat;

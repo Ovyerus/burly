@@ -1,9 +1,6 @@
-"use strict";
-
 const Template = require('./Template');
 const Pattern = require('./Pattern');
 const PatternThat = require('./Pattern/That');
-const debug = require('debug')('surly2');
 
 /**
  * From AIML Spec
@@ -24,98 +21,61 @@ const debug = require('debug')('surly2');
  *    <!-- Content: aiml-category-elements -->
  * </aiml:category>
  */
-module.exports = class Category {
+class Category {
+    constructor(category, surly, topic) {
+        this.topic = topic || '*';
+        this.surly = surly;
 
-  /**
-   * Constructor method
-   * @param  {Node} node Xmllibjs node object
-   */
-  constructor (category, surly, topic) {
-    this.topic = topic || '*';
-    this.surly = surly;
-    var patterns = category.find('pattern');
-    var templates = category.find('template');
-    var thats = category.find('that');
+        let patterns = category.find('pattern');
+        let templates = category.find('template');
+        let thats = category.find('that');
 
-    if (patterns.length !== 1) {
-      throw 'Category should have exactly one PATTERN.';
+        if (patterns.length !== 1) throw new Error('Category should have exactly one PATTERN.');
+        if (templates.length !== 1) throw new Error('Category should have exactly one TEMPLATE.');
+
+        this.pattern = new Pattern(patterns[0], surly);
+        this.pattern.category = this;
+        this.template = new Template(templates[0], surly);
+        this.template.category = this;
+        this.that = '';
+
+        if (thats.length === 1) {
+            this.that = new PatternThat(thats[0], surly, this);
+            // this.that.category = this;
+        } else if (thats.length > 1) {
+            throw new Error('Category must not contain more than one THAT.');
+        }
     }
 
-    if (templates.length !== 1) {
-      throw 'Category should have exactly one TEMPLATE.';
+    /**
+     * Check whether the category has a <that> and whether
+     * if matches the previous response
+     * @returns {Boolean} True if <that> exists and matches
+     */
+    checkThat() {
+        // If no THAT then it matches by default
+        if (!this.that) return true;
+
+        let text = this.that.getText();
+        let prev = this.surly.environment.getPreviousResponse(1).toUpperCase();
+
+        return text === prev;
     }
 
-    this.pattern = new Pattern(patterns[0], surly);
-    this.pattern.category = this;
-    this.template = new Template(templates[0], surly);
-    this.template.category = this;
-    this.that = '';
+    /**
+     * Check the category against a given sentence. Also, if a THAT tag is present
+     * in the category, check that against the previous response
+     * 
+     * @param {String} sentence Sentence to match.
+     * @returns {Boolean} True if the sentence matches.
+     */
+    match(sentence) {
+        if (this.pattern.compare(sentence)) {
+            if (this.topic !== '*' && this.topic.toUpperCase() !== this.surly.environment.getVariable('topic')) return false;
 
-    if (thats.length === 1) {
-      this.that = new PatternThat(thats[0], surly, this);
-      // this.that.category = this;
-    } else if (thats.length > 1) {
-      throw 'Category must not contain more than one THAT.';
+            return this.checkThat;
+        } else return false;
     }
-  }
+}
 
-  /**
-  * Return the child pattern element
-  * @return {Pattern}
-  */
-  getPattern () {
-    return this.pattern;
-  }
-
-  /**
-  * Check whether the category has a <that> and whether
-  * if matches the previous response
-  * @param  {Object}  category Libxmljs category aiml node
-  * @return {Boolean}          True if <that> exists and matches
-  */
-  checkThat (callback) {
-    // If no THAT then it matches by default
-    if (!this.that) {
-      debug('No THAT.');
-      return callback(true);
-    }
-
-    this.that.getText(function (err, thatText) {
-      var previous = this.surly.environment.getPreviousResponse(1).toUpperCase();
-
-      debug('Comparing THAT - "' + thatText + '", "' + previous + '"');
-      callback(thatText === previous);
-    }.bind(this));
-  }
-
-  /**
-  * Return the template node
-  * @return {Template}
-  */
-  getTemplate () {
-    return this.template;
-  }
-
-  /**
-   * Check the category against a given sentence. Also, if a THAT tag is present
-   * in the category, check that against the previous response
-   */
-  match (sentence, callback) {
-    if (this.pattern.compare(sentence)) {
-      debug('Matched pattern: ' + sentence + ' -- ' + this.pattern);
-
-      if (this.topic !== '*' &&
-        this.topic.toUpperCase() !== this.surly.environment.getVariable('topic')) {
-          callback(false);
-          return;
-      }
-
-      this.checkThat(function (matches) {
-        callback(matches);
-      }.bind(this));
-    } else {
-      debug('No match');
-      callback(false);
-    }
-  }
-};
+module.exports = Category;

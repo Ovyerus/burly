@@ -1,6 +1,4 @@
-"use strict";
-
-var BaseNode = require('../BaseNode');
+const BaseNode = require('../BaseNode');
 
 /**
  * From AIML Spec
@@ -14,12 +12,15 @@ var BaseNode = require('../BaseNode');
  * <!-- Category: aiml-template-elements -->
  * <aiml:size/>
  */
-module.exports = class Size extends BaseNode {
-  constructor (node, surly) {
-    super(node, surly);
-  }
+class Size extends BaseNode {
+    constructor(node, surly) {
+        super(node, surly);
+        this.type = 'size';
+    }
 
-  getText (callback) {
-    callback(null, this.surly.environment.countCategories());
-  }
-};
+    getText() {
+        return this.surly.environment.countCategories();
+    }
+}
+
+module.exports = Size;

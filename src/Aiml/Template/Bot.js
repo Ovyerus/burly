@@ -1,6 +1,4 @@
-"use strict";
-
-var BaseNode = require('../BaseNode');
+const BaseNode = require('../BaseNode');
 
 /**
  * From AIML Spec
@@ -21,18 +19,18 @@ var BaseNode = require('../BaseNode');
  * <!-- Category: aiml-template-elements -->
  * <aiml:bot name = aiml-predicate-name />
  */
-module.exports = class Bot extends BaseNode {
-  constructor (node, surly) {
-    super(node, surly);
-    this.type = 'bot';
-    this.name = node.attr('name').value();
+class Bot extends BaseNode {
+    constructor(node, surly) {
+        super(node, surly);
+        this.type = 'bot';
+        this.name = node.attr('name').value();
 
-    if (!this.name) {
-      throw "Invalid AIML: Bot tag with no name attribute.";
+        if (!this.name) throw new Error('Invalid AIML: Bot tag with no name attribute.');
     }
-  }
 
-  getText (callback) {
-    callback(null, this.surly.environment.getBot(this.name));
-  }
-};
+    getText() {
+        return this.surly.environment.getBot(this.name);
+    }
+}
+
+module.exports = Bot;

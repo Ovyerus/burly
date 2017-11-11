@@ -1,7 +1,4 @@
-"use strict";
-
-var BaseNode = require('../BaseNode');
-var Surly = require('../../Surly');
+const BaseNode = require('../BaseNode');
 
 /**
  * From AIML Spec
@@ -21,24 +18,17 @@ var Surly = require('../../Surly');
  *    <!-- Contents: aiml-template-elements -->
  * </aiml:srai>
  */
-module.exports = class Srai extends BaseNode {
+class Srai extends BaseNode {
+    constructor(node, surly) {
+        super(node, surly);
+        this.type = 'srai';
+        this.content = node.text().toString();
+    }
 
-  /**
-   * Constructor method
-   * @param  {Node} node Xmllibjs node object
-   */
-  constructor (node, surly) {
-    super(node, surly);
-    this.type = 'srai';
-    this.content = node.text().toString();
-  }
+    getText(callback) {
+        // @todo - make this work!
+        this.surly.talk(this.content, callback);
+    }
+}
 
-  /**
-   * Return content as text
-   * @return {String}
-   */
-  getText (callback) {
-    // @todo - make this work!
-    this.surly.talk(this.content, callback);
-  }
-};
+module.exports = Srai;

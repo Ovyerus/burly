@@ -1,6 +1,4 @@
-"use strict";
-
-var BaseNode = require('../BaseNode');
+const BaseNode = require('../BaseNode');
 
 /**
  * From AIML Spec
@@ -20,10 +18,15 @@ var BaseNode = require('../BaseNode');
  *
  * See Unicode Case Mapping for implementation suggestions. 
  */
-module.exports = class Uppercase extends BaseNode {
-  getText (callback) {
-    this.evaluateChildren(function (err, text) {
-      callback(err, text.toUpperCase());
-    });
-  }
-};
+class Uppercase extends BaseNode {
+    constructor(node, surly) {
+        super(node, surly);
+        this.type = 'uppercase';
+    }
+
+    getText() {
+        return this.evaluateChildren().toUpperCase();
+    }
+}
+
+module.exports = Uppercase;

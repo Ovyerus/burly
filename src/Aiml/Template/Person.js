@@ -1,6 +1,7 @@
-"use strict";
-
-var BaseNode = require('../BaseNode');
+const BaseNode = require('../BaseNode');
+const libxmljs = require('libxmljs');
+const substitute = require('../../Substitutions');
+const Star = require('./Star');
 
 /**
  * From AIML Spec. Handles both the transformational PERSON element and
@@ -46,24 +47,20 @@ var BaseNode = require('../BaseNode');
  * implementation.
  */
 
-module.exports = class Person extends BaseNode {
-  constructor (node, surly) {
-    super(node, surly);
-    this.type = 'person';
+class Person extends BaseNode {
+    constructor(node, surly) {
+        super(node, surly);
+        this.type = 'person';
 
-    if (node.childNodes().length === 0) {
-      var star = new libxmljs.Element(node.doc(), 'star');
-      this.children.push(new Star(star, surly));
+        if (node.childNodes().length === 0) {
+            let star = new libxmljs.Element(node.doc(), 'star');
+            this.children.push(new Star(star, surly));
+        }
     }
-  }
 
-  getText (callback) {
-    this.evaluateChildren(function (err, text) {
-      callback(err, substitute(text, 'person'));
-    });
-  }
-};
+    getText() {
+        return substitute(this.evaluateChildren, 'person');
+    }
+}
 
-const libxmljs = require('libxmljs');
-const substitute = require('../../Substitutions');
-const Star = require('./Star');
+module.exports = Person;
