@@ -42,7 +42,7 @@ npm install
 
 ## Programmatic API
 ```js
-const Burly = require('burly');
+const Burly = require('burlyy');
 const bot = new Burly({
     defaultResponse: "I don't know what you're on about.",
     name: 'Botto'
