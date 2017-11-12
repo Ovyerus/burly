@@ -49,16 +49,18 @@ const Star = require('./Star');
  * Historically, implementations of gender have exclusively dealt with pronouns,
  * likely due to the fact that most AIML has been written in English. However,
  * the decision about whether to transform gender of other words is left up to
- * the implementation. 
+ * the implementation.
+ * 
+ * @implements {BaseNode}
  */
 class Gender extends BaseNode {
-    constructor(node, surly) {
-        super(node, surly);
+    constructor(node, burly) {
+        super(node, burly);
         this.type = 'gender';
 
         if (node.childNodes().length === 0) {
             let star = new libxmljs.Element(node.doc(), 'star');
-            this.children.push(new Star(star, surly));
+            this.children.push(new Star(star, burly));
         }
     }
 

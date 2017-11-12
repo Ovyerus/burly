@@ -18,10 +18,12 @@ const BaseNode = require('../BaseNode');
  *
  * <!-- Category: aiml-template-elements -->
  * <aiml:bot name = aiml-predicate-name />
+ * 
+ * @implements {BaseNode}
  */
 class Bot extends BaseNode {
-    constructor(node, surly) {
-        super(node, surly);
+    constructor(node, burly) {
+        super(node, burly);
         this.type = 'bot';
         this.name = node.attr('name').value();
 
@@ -29,7 +31,7 @@ class Bot extends BaseNode {
     }
 
     getText() {
-        return this.surly.environment.getBot(this.name);
+        return this.burly.environment.getBot(this.name);
     }
 }
 

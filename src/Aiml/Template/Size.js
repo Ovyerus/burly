@@ -11,15 +11,17 @@ const BaseNode = require('../BaseNode');
  *
  * <!-- Category: aiml-template-elements -->
  * <aiml:size/>
+ * 
+ * @implements {BaseNode}
  */
 class Size extends BaseNode {
-    constructor(node, surly) {
-        super(node, surly);
+    constructor(node, burly) {
+        super(node, burly);
         this.type = 'size';
     }
 
     getText() {
-        return this.surly.environment.countCategories();
+        return this.burly.environment.countCategories();
     }
 }
 

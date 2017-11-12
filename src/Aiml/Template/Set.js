@@ -28,16 +28,18 @@ const BaseNode = require('../BaseNode');
  * <aiml:set name = aiml-predicate-name >
  *    <!-- Contents: aiml-template-elements -->
  * </aiml:set>
+ * 
+ * @implements {BaseNode}
  */
 class Set extends BaseNode {
-    constructor(node, surly) {
-        super(node, surly);
+    constructor(node, burly) {
+        super(node, burly);
         this.type = 'set';
         this.name = node.attr('name').value();
     }
 
     getText() {
-        this.surly.environment.setVariable(this.name, this.evaluateChildren());
+        this.burly.environment.setVariable(this.name, this.evaluateChildren());
 
         // @todo implement return-name-when-set. See AIML spec section 7.4.1
         return '';

@@ -15,10 +15,12 @@ const BaseNode = require('../BaseNode');
  * <aiml:think>
  *    <!-- Contents: aiml-template-elements -->
  * </aiml:think>
+ * 
+ * @implements {BaseNode}
  */
 class Think extends BaseNode {
-    constructor(node, surly) {
-        super(node, surly);
+    constructor(node, burly) {
+        super(node, burly);
         this.type = 'think';
     }
 

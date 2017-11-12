@@ -2,10 +2,12 @@ const BaseNode = require('../BaseNode');
 
 /**
  * A generic container element use in conditionals and the Random element.
+ * 
+ * @implements {BaseNode}
  */
 class Li extends BaseNode {
-    constructor(node, surly) {
-        super(node, surly);
+    constructor(node, burly) {
+        super(node, burly);
         this.type = 'li';
 
         let name = node.attr('name');

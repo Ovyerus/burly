@@ -7,10 +7,10 @@
  * within other elements.
  */
 class Text {
-    constructor(node, surly) {
+    constructor(node, burly) {
         this.children = [];
         this.type = 'text';
-        this.surly = surly;
+        this.burly = burly;
 
         if (typeof node === 'string') this.content = node;
         else this.content = node.toString();

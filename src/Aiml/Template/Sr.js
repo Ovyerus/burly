@@ -11,16 +11,18 @@ const BaseNode = require('../BaseNode');
  *
  * <!-- Category: aiml-template-elements -->
  * <aiml:sr/>
+ * 
+ * @implements {BaseNode}
  */
 class Sr extends BaseNode {
-    constructor(node, surly) {
-        super(node, surly);
+    constructor(node, burly) {
+        super(node, burly);
         this.type = 'sr';
     }
 
     getText() {
-        let star = this.surly.environment.wildcardStack.getLast();
-        this.surly.talk(star[0]);
+        let star = this.burly.environment.wildcardStack.getLast();
+        this.burly.talk(star[0]);
     }
 }
 

@@ -23,10 +23,12 @@ const BaseNode = require('../BaseNode');
  *
  * <!-- Category: aiml-template-elements -->
  * <aiml:get name = aiml-predicate-name />
+ * 
+ * @implements {BaseNode}
  */
 class Get extends BaseNode {
-    constructor(node, surly) {
-        super(node, surly);
+    constructor(node, burly) {
+        super(node, burly);
         this.type = 'get';
         this.name = node.attr('name').value();
         this.default = node.attr('default');
@@ -35,7 +37,7 @@ class Get extends BaseNode {
     }
 
     getText() {
-        return this.surly.environment.getVariable(this.name) || this.default || '[UNKNOWN]';
+        return this.burly.environment.getVariable(this.name) || this.default || '[UNKNOWN]';
     }
 }
 

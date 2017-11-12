@@ -12,10 +12,12 @@ const BaseNode = require('../BaseNode');
  *
  * <!-- Category: aiml-template-elements -->
  * <aiml:date/>
+ * 
+ * @implements {BaseNode}
  */
 class DateNode extends BaseNode {
-    constructor(node, surly) {
-        super(node, surly);
+    constructor(node, burly) {
+        super(node, burly);
         this.type = 'date';
     }
 

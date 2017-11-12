@@ -46,15 +46,17 @@ const Star = require('./Star');
  * to the fact that most AIML has been written in English. However, the decision
  * about whether to transform the person aspect of other words is left up to the
  * implementation.
+ * 
+ * @implements {BaseNode}
  */
 class Person2 extends BaseNode {
-    constructor(node, surly) {
-        super(node, surly);
+    constructor(node, burly) {
+        super(node, burly);
         this.type = 'person2';
 
         if (node.childNodes().length === 0) {
             let star = new libxmljs.Element(node.doc(), 'star');
-            this.children.push(new Star(star, surly));
+            this.children.push(new Star(star, burly));
         }
     }
 

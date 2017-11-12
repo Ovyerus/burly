@@ -7,8 +7,8 @@ const Stack = require('./Stack');
  * @prop {Object} storedVariables Variables gotten from chat.
  * @prop {String[]} inventory Stored items.
  * @prop {Stack} wildcardStack
- * @prop {String[]} previousInputs
- * @prop {String[]} previousResponses
+ * @prop {String[]} previousInputs All previous inputs given to the environment.
+ * @prop {String[]} previousResponses All previous responses from the environment.
  */
 class Environment {
     constructor() {
@@ -99,11 +99,11 @@ class Environment {
     }
 
     /**
-     * Get a previous response
+     * Gets a previous response
      * 
-     * @param {Number} index 1 = previous response, 2 = one before that etc...
-     * @param {Number} sentence Sentence number
-     * @returns {String} Response
+     * @param {Number} [index=1] 1 = previous response, 2 = one before that etc...
+     * @param {Number} [sentence=1] Sentence index
+     * @returns {String} Last response
      */
     getPreviousResponse(index, sentence) {
         index = index || 1;
@@ -115,7 +115,7 @@ class Environment {
         // @todo - handle multple sentences properly
         let response = this.previousResponses[index].split('. ');
 
-        sentence = sentence - 1;
+        sentence -= 1;
 
         if (typeof response[sentence] === 'undefined') return '';
 
@@ -123,11 +123,11 @@ class Environment {
     }
 
     /**
-     * Get a previous input
+     * Gets a previous input
      * 
-     * @param {Integer} index 1 = previous input, 2 = one before that etc...
-     * @param {Number} sentence Sentence number
-     * @returns {String} Input
+     * @param {Integer} [index=1] 1 = previous input, 2 = one before that etc...
+     * @param {Number} [sentence=1] Sentence index
+     * @returns {String} Previous input
      */
     getPreviousInput(index, sentence) {
         index = index || 1;
@@ -147,10 +147,10 @@ class Environment {
     }
 
     /**
-     * Look up a bot attribute
+     * Looks up a bot attribute.
      * 
      * @param {String} attribute Name of attribute to look up
-     * @returns {String} The attributes value
+     * @returns {String} Value of the attribute.
      */
     getBot(attribute) {
         if (typeof this.botAttributes[attribute] === 'undefined') return '';
@@ -158,10 +158,10 @@ class Environment {
     }
 
     /**
-     * Set a user variable
+     * Sets a user variable
      * 
-     * @param {String} name Name of variable
-     * @param {String} value Value of variable
+     * @param {String} name Name of the variable to set.
+     * @param {String} value Value for the variable.
      */
     setVariable(name, value) {
         if (name === 'topic') value = value.toUpperCase();
@@ -170,8 +170,9 @@ class Environment {
 
     /**
      * Get a user variable
-     * @param {String} name Name of variable
-     * @returns {String} Value of variable
+     * 
+     * @param {String} name Name of variable to get.
+     * @returns {String} Value of the wanted variable.
      */
     getVariable(name) {
         if (typeof this.storedVariables[name] === 'undefined') return '';
@@ -180,14 +181,15 @@ class Environment {
 
     /**
      * Get the number of loaded categories. For use in the <size /> tag.
-     * @returns {Number} .
+     * 
+     * @returns {Number} Number of categories.
      */
     countCategories() {
         return this.aiml.categories.length;
     }
 
     /**
-     * Push new_item into the inventory and return whatever falls off the other end
+     * Push newItem into the inventory and return whatever falls off the other end
      * 
      * @param {String} newItem Item to push into the inventory.
      * @returns {String} Other item.
@@ -196,8 +198,7 @@ class Environment {
         this.inventory.push(newItem);
 
         if (this.inventory.length > 1) return this.inventory.shift();
-
-        return '';
+        else return '';
     }
 }
 

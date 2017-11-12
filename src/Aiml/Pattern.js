@@ -16,17 +16,24 @@
  * </aiml:pattern>
  */
 class Pattern {
-    constructor(pattern, surly) {
-        this.surly = surly;
+    /**
+     * Constructs a new pattern.
+     * 
+     * @param {Node} pattern Pattern node to get text from.
+     * @param {Burly} burly Burly instance.
+     */
+    constructor(pattern, burly) {
+        this.burly = burly;
         this.wildcardRegex = ' ([A-Z|0-9|\\s]*[A-Z|0-9|-]*[A-Z|0-9]*[!|.|?|\\s]*)';
         this.textPattern = pattern.text();
         this.regex = this.patternToRegex(this.textPattern);
     }
 
     /**
-     * Match the pattern against a given sentence
-     * @param {String} sentence Input from user
-     * @returns {Boolean} True if sentence and pattern match
+     * Matches a given sentence to the pattern.
+     * 
+     * @param {String} sentence Input from user.
+     * @returns {Boolean} Whether the sentence matches.
      */
     matchSentence(sentence) {
         // Add spaces to prevent false positives
@@ -37,8 +44,8 @@ class Pattern {
         let matches = sentence.match(this.regex);
 
         if (matches &&
-         (matches[0].length >= sentence.length || this.regex.indexOf(this.wildcard_regex) > -1)) {
-            this.surly.environment.wildcardStack.push(this.getWildCardValues(sentence, this));
+         (matches[0].length >= sentence.length || this.regex.includes(this.wildcardRegex))) {
+            this.burly.environment.wildcardStack.push(this.getWildCardValues(sentence, this));
             return true;
         }
 
@@ -46,16 +53,17 @@ class Pattern {
     }
 
     /**
-     * Convert a string with wildcards (*s) to regex
-     * @param {String} pattern The string with wildcards
-     * @returns {String} The altered string
+     * Converts a string with wildcards (*s) to regex.
+     * 
+     * @param {String} pattern String with wildcards to compile.
+     * @returns {RegExp} Compiled regex.
      */
     patternToRegex(pattern) {
-        // add spaces to prevent e.g. foo matching food
+        // Add spaces to prevent e.g. foo matching food
         if (pattern.startsWith('*')) pattern = ' ' + pattern;
 
         // remove spaces before *s and replace wildcards with regex
-        pattern = pattern.replace(' *', '*').replace(/\*/g, this.wildcard_regex);
+        pattern = pattern.replace(' *', '*').replace(/\*/g, this.wildcardRegex);
 
         if (!pattern.endsWith('*')) pattern += '[\\s|?|!|.]*';
 
@@ -63,16 +71,17 @@ class Pattern {
     }
 
     /**
-     * Compare the pattern to given sentence
-     * @param {String} sentence Sentence to compare
-     * @returns {Boolean} True if sentence and pattern match
+     * Compares a sentence to the pattern.
+     * 
+     * @param {String} sentence Sentence to compare.
+     * @returns {Boolean} Whether the sentence matches.
      */
     compare(sentence) {
         let matches = sentence.match(this.regex);
 
         if (matches &&
          (matches[0].length >= sentence.length || this.textPattern.indexOf(this.wildcardRegex) > -1)) {
-            this.surly.environment.wildcardStack.push(this.getWildCardValues(sentence));
+            this.burly.environment.wildcardStack.push(this.getWildCardValues(sentence));
             return true;
         }
 
@@ -82,7 +91,7 @@ class Pattern {
     getWildCardValues(sentence) {
         let replaceArray = this.textPattern.split('*');
 
-        if (replaceArray.length < 2) return this.surly.environment.wildcardStack.getLast();
+        if (replaceArray.length < 2) return this.burly.environment.wildcardStack.last;
         for (let val of replaceArray) sentence = sentence.replace(val, '|');
 
         // Split by pipe and we're left with values and empty strings

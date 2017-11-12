@@ -21,10 +21,12 @@ const BaseNode = require('../BaseNode');
  *
  * <!-- Category: aiml-template-elements -->
  * <aiml:star index = single-integer-index />
+ * 
+ * @implements {BaseNode}
  */
 class Star extends BaseNode {
-    constructor(node, surly) {
-        super(node, surly);
+    constructor(node, burly) {
+        super(node, burly);
         this.type = 'star';
 
         if (node.attr('index')) this.index = node.attr('index').value() - 1;
@@ -32,7 +34,7 @@ class Star extends BaseNode {
     }
 
     getText() {
-        let wildcards = this.surly.environment.wildcardStack.getLast();
+        let wildcards = this.burly.environment.wildcardStack.last;
 
         if (typeof wildcards[this.index] === 'undefined') throw new Error('Star with no matching * value.');
         else return wildcards[this.index];

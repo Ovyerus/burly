@@ -2,18 +2,22 @@
  * Stack for holding stuff.
  * Based on code from my cmd.js
  *
- * @author   Jake Gully <chimpytk@gmail.com>
- * @license  MIT License
+ * @author Jake Gully <chimpytk@gmail.com>
+ * @license MIT
  */
 
-class Stack {
+/**
+ * Class for holding a max number of things.
+ * 
+ * @extends Array
+ * @prop {Number} maxSize Maximum number of items the stack can hold.
+ */
+class Stack extends Array {
     constructor(maxSize) {
-        if (typeof maxSize !== 'number') throw new TypeError('Stack error: maxSize should be a number.');
-        
+        if (typeof maxSize !== 'number') throw new TypeError('maxSize is not a number.');
+
+        super();
         this.maxSize = maxSize;
-        this.arr = []; // This is a fairly meaningless name but
-        // makes it sound like this function was
-        // written by a pirate.  I'm keeping it.
     }
 
     /**
@@ -21,23 +25,9 @@ class Stack {
      * @param {String} item Item to append to stack
      */
     push(item) {
-        this.arr.push(item);
+        super.push(item);
 
-        // crop off excess
-        while (this.arr.length > this.maxSize) this.arr.shift();
-    }
-
-    /**
-     * Get an item by it's index.
-     * 
-     * @param {Number} index Item to get.
-     * @returns {String} .
-     */
-    get(index) {
-        if (index < 1) return this.arr.slice(index)[0] || null;
-        if (typeof this.arr[index] === 'undefined') return null;
-
-        return this.arr[index];
+        while (this.length > this.maxSize) this.shift();
     }
 
     /**
@@ -45,43 +35,26 @@ class Stack {
      * 
      * @returns {String} Item
      */
-    getLast() {
-        if (this.isEmpty()) return null;
+    get last() {
+        if (this.isEmpty) return null;
 
-        return this.arr.slice(-1)[0];
+        return this.slice(-1)[0];
     }
 
     /**
      * Checks if the stack is empty.
      *  
-     * @returns {Boolean} True if stack is empty
+     * @returns {Boolean} Whether the stack is empty or not.
      */
-    isEmpty() {
-        return !!this.arr.length;
+    get isEmpty() {
+        return !!this.length;
     }
 
     /**
-     * Empty array and remove from localstorage
+     * Empties the stack.
      */
     empty() {
-        this.arr = [];
-    }
-
-    /*\*
-     * Get entire stack array
-     * @return {Array} The stack array
-     *
-    getArr() {
-        return this.arr;
-    }*/
-
-    /**
-     * Get size of the stack
-     * 
-     * @returns {Number} Size of stack
-     */
-    getSize() {
-        return this.arr.length;
+        this.length = 0;
     }
 }
 

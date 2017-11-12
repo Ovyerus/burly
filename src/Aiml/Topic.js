@@ -19,12 +19,10 @@ const Category = require('./Category');
  * </aiml:topic>
  */
 class Topic {
-    constructor(node, surly) {
+    constructor(node, burly) {
         let categories = node.find('category');
 
-        for (var i = 0; i < categories.length; i++) {
-            surly.aiml.categories.push(new Category(categories[i]));
-        }
+        for (let cat of categories) burly.aiml.categories.push(new Category(cat));
     }
 }
 

@@ -25,12 +25,14 @@ const BaseNode = require('../BaseNode');
  *
  * <!-- Category: aiml-template-elements -->
  * <aiml:that index = (single-integer-index | comma-separated-integer-pair) />
+ * 
+ * @implements {BaseNode}
  */
 class That extends BaseNode {
-    constructor(node, surly) {
+    constructor(node, burly) {
         let index;
 
-        super(node, surly);
+        super(node, burly);
         this.type = 'that';
 
         if (node.attr('index') === null) index = '1,1';
@@ -45,7 +47,7 @@ class That extends BaseNode {
     }
 
     getText() {
-        return this.surly.environment.getPreviousResponse(this.index, this.sentence);
+        return this.burly.environment.getPreviousResponse(this.index, this.sentence);
     }
 }
 

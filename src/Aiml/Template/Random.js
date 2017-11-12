@@ -13,10 +13,12 @@ const BaseNode = require('../BaseNode');
  * <aiml:random>
  *    <!-- Contents: default-list-item+ -->
  * </aiml:random>
+ * 
+ * @implements {BaseNode}
  */
 class Random extends BaseNode {
-    constructor(node, surly) {
-        super(node, surly);
+    constructor(node, burly) {
+        super(node, burly);
         this.type = 'random';
     }
 

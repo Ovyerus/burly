@@ -1,19 +1,24 @@
+// inb4 someone complains that this shouldn't be classified as an interface.
+
 /**
- * Base node class for nodes that can have children.
+ * Interface for the various tags used by AIML.
+ * 
+ * @interface
+ * @prop {String} type Name of the node type.
+ * @prop {Burly} burly Burly instance.
+ * @prop {Array} children Child nodes.
  */
 class BaseNode {
-
     /**
      * Creates a new node.
      * 
-     * @param {Node} node Xmllibjs node object
-     * @param {Surly} surly Surly instance.
+     * @param {Node} node Node object to check.
+     * @param {Burly} burly Burly instance.
      */
-    constructor(node, surly) {
-
+    constructor(node, burly) {
         this.type = 'basenode';
         this.children = [];
-        this.surly = surly;
+        this.burly = burly;
 
         // Allow empty nodes for manually creating elements
         if (node === null) return;
@@ -28,89 +33,90 @@ class BaseNode {
             switch (nodeType) {
                 case 'a': // Treat A tags as plain text. @todo
                 case 'text':
-                    this.children.push(new TextNode(child, this.surly));
+                    this.children.push(new TextNode(child, this.burly));
                     break;
                 case 'br':
-                    this.children.push(new TextNode('\n', this.surly));
+                    this.children.push(new TextNode('\n', this.burly));
                     break;
                 case 'bot':
-                    this.children.push(new Bot(child, this.surly));
+                    this.children.push(new Bot(child, this.burly));
                     break;
                 case 'condition':
-                    this.children.push(new Condition(child, this.surly));
+                    this.children.push(new Condition(child, this.burly));
                     break;
                 case 'date':
-                    this.children.push(new DateNode(child, this.surly));
+                    this.children.push(new DateNode(child, this.burly));
                     break;
                 case 'gender':
-                    this.children.push(new Gender(child, this.surly));
+                    this.children.push(new Gender(child, this.burly));
                     break;
                 case 'get':
-                    this.children.push(new Get(child, this.surly));
+                    this.children.push(new Get(child, this.burly));
                     break;
                 case 'input':
-                    this.children.push(new Input(child, this.surly));
+                    this.children.push(new Input(child, this.burly));
                     break;
                 case 'inventory':
-                    this.children.push(new Inventory(child, this.surly));
+                    this.children.push(new Inventory(child, this.burly));
                     break;
                 case 'li':
-                    this.children.push(new Li(child, this.surly));
+                    this.children.push(new Li(child, this.burly));
                     break;
                 case 'lowercase':
-                    this.children.push(new Lowercase(child, this.surly));
+                    this.children.push(new Lowercase(child, this.burly));
                     break;
                 case 'person':
-                    this.children.push(new Person(child, this.surly));
+                    this.children.push(new Person(child, this.burly));
                     break;
                 case 'person2':
-                    this.children.push(new Person2(child, this.surly));
+                    this.children.push(new Person2(child, this.burly));
                     break;
                 case 'random':
-                    this.children.push(new Random(child, this.surly));
+                    this.children.push(new Random(child, this.burly));
                     break;
                 case 'set':
-                    this.children.push(new SetNode(child, this.surly));
+                    this.children.push(new SetNode(child, this.burly));
                     break;
                 case 'size':
-                    this.children.push(new Size(child, this.surly));
+                    this.children.push(new Size(child, this.burly));
                     break;
                 case 'sr':
-                    this.children.push(new Sr(child, this.surly));
+                    this.children.push(new Sr(child, this.burly));
                     break;
                 case 'srai':
-                    this.children.push(new Srai(child, this.surly));
+                    this.children.push(new Srai(child, this.burly));
                     break;
                 case 'star':
-                    this.children.push(new Star(child, this.surly));
+                    this.children.push(new Star(child, this.burly));
                     break;
                 case 'uppercase':
-                    this.children.push(new Uppercase(child, this.surly));
+                    this.children.push(new Uppercase(child, this.burly));
                     break;
                 case 'formal':
-                    this.children.push(new Formal(child, this.surly));
+                    this.children.push(new Formal(child, this.burly));
                     break;
                 case 'sentence':
-                    this.children.push(new Sentence(child, this.surly));
+                    this.children.push(new Sentence(child, this.burly));
                     break;
                 case 'that':
-                    this.children.push(new That(child, this.surly));
+                    this.children.push(new That(child, this.burly));
                     break;
                 case 'think':
-                    this.children.push(new Think(child, this.surly));
+                    this.children.push(new Think(child, this.burly));
                     break;
                 case 'version':
-                    this.children.push(new Version(child, this.surly));
+                    this.children.push(new Version(child, this.burly));
                     break;
                 default:
-                    this.children.push(new TextNode('[NOT IMPLEMENTED: ' + nodeType + ']', this.surly));
+                    this.children.push(new TextNode('[NOT IMPLEMENTED: ' + nodeType + ']', this.burly));
             }
         }
     }
 
     /**
-     * Render tag as text. To be overridden where necessary.
-     * @returns {String} Text
+     * Renders the tag as text. To be overridden where necessary.
+     * 
+     * @returns {String} Rendered text.
      */
     getText() {
         return this.evaluateChildren();
@@ -118,6 +124,7 @@ class BaseNode {
 
     /**
      * Evaluate child nodes as text. For use in child class getText methods.
+     * 
      * @returns {String} All child nodes
      */
     evaluateChildren() {

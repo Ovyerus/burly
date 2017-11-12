@@ -3,18 +3,27 @@ const libxmljs = require('libxmljs');
 const Category = require('./Category');
 
 /**
-* Main AIML handler. Contains a list of category nodes, potentially loaded
-* from multiple files.
-*/
+ * Main AIML handler.
+ * Contains a list of category nodes, potentially loaded from multiple files.
+ * 
+ * @prop {Burly} burly Burly instance.
+ * @prop {Category[]} categories All the loaded categories.
+ * @prop {String[]} topics All the loaded topics.
+ */
 class Aiml {
-    constructor(surly) {
-        this.surly = surly;
+    /**
+     * Constructs a new AIML parser.
+     * 
+     * @param {Burly} burly Burly instance.
+     */
+    constructor(burly) {
+        this.burly = burly;
         this.wipe();
     }
 
     /**
-     * Remove all loaded data from memory and set up defaults. Called when Aiml
-     * object is initialised
+     * Remove all loaded data from memory and set up defaults.
+     * Called when the object is initialised
      */
     wipe() {
         this.categories = [];
@@ -22,16 +31,11 @@ class Aiml {
     }
 
     /**
-     * Load an AIML string
-     * @param {String} aiml A whole AIML file
+     * Loads and parses an AIML string.
+     * 
+     * @param {String} aiml A whole AIML file.
      */
     parseAiml(aiml) {
-        /*var xmlDoc = libxmljs.parseXmlString(aiml),
-            topics = xmlDoc.find('topic'),
-            categories,
-            topic_name,
-            topic_cats,
-            i, j;*/
         let doc = libxmljs.parseXmlString(aiml);
         let topics = doc.find('topic');
 
@@ -40,17 +44,18 @@ class Aiml {
             let topicName = topic.attr('name').value();
             let topicCats = topic.find('category');
 
-            for (let cat of topicCats) this.categories.push(new Category(cat, this.surly, topicName));
+            for (let cat of topicCats) this.categories.push(new Category(cat, this.burly, topicName));
         }
 
         let categories = doc.find('category');
 
-        for (let cat of categories) this.categories.push(new Category(cat, this.surly));
+        for (let cat of categories) this.categories.push(new Category(cat, this.burly));
         //this.showCategories();
     }
 
     /**
-     * List out all loaded categories and their topics. For debugging.
+     * List out all loaded categories and their topics.
+     * For debugging.
      */
     showCategories() {
         for (let cat of this.categories) console.log(' - ' + cat.pattern.textPattern);
@@ -58,7 +63,8 @@ class Aiml {
 
     /**
      * Simple check to see if any data has been loaded
-     * @returns {Boolean} True if data has been loaded
+     * 
+     * @returns {Boolean} Whether there is any data loaded.
      */
     hasData() {
         return !!this.categories.length;
@@ -73,15 +79,15 @@ class Aiml {
     getResponse(sentence) {
         return this.findMatchingCategory(sentence).then(cat => {
             if (cat) return cat.template.getText();
-            else return this.surly.defaultResponse;
+            else return this.burly.defaultResponse;
         });
     }
 
     /**
-     * Loop through loaded AIML and return the `template` from the first `category`
-     * with a `pattern` that matches `sentence`.
+     * Loops through the loaded AIML files, and returns the first template that matches the sentence.
+     * 
      * @param {String} sentence Sentence to find a matching category for.
-     * @returns {Promise<*>} .
+     * @returns {Promise<?Category>} The matching category.
      */
     findMatchingCategory(sentence) {
         return new Promise((resolve, reject) => {
@@ -102,6 +108,8 @@ class Aiml {
      */
     loadDir(dir) {
         return new Promise((resolve, reject) => {
+            if (typeof dir !== 'string') return reject(new TypeError('dir is not a string.'));
+
             let collect = [];
 
             fs.readdir(dir, (err, files) => {
@@ -127,6 +135,8 @@ class Aiml {
      */
     loadFile(file) {
         return new Promise((resolve, reject) => {
+            if (typeof file !== 'string') return reject(new TypeError('file is not a string.'));
+
             fs.readFile(file, 'utf8', (err, data) => {
                 if (err) return reject(err);
                 else {
@@ -149,7 +159,7 @@ class Aiml {
      * @returns {String} Normalised sentence.
      */
     normaliseSentence(sentence) {
-        // add spaces to prevent false positives
+        // Add spaces to prevent false positives
         if (sentence.startsWith(' ')) sentence = ' ' + sentence;
 
         // Remove trailing punctuation

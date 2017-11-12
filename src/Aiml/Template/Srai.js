@@ -17,17 +17,19 @@ const BaseNode = require('../BaseNode');
  * <aiml:srai>
  *    <!-- Contents: aiml-template-elements -->
  * </aiml:srai>
+ * 
+ * @implements {BaseNode}
  */
 class Srai extends BaseNode {
-    constructor(node, surly) {
-        super(node, surly);
+    constructor(node, burly) {
+        super(node, burly);
         this.type = 'srai';
         this.content = node.text().toString();
     }
 
     getText(callback) {
         // @todo - make this work!
-        this.surly.talk(this.content, callback);
+        this.burly.talk(this.content, callback);
     }
 }
 

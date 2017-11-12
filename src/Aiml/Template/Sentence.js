@@ -20,10 +20,12 @@ const BaseNode = require('../BaseNode');
  * the Unicode standard, then the original string is returned.
  *
  * See Unicode Case Mapping for implementation suggestions. 
+ * 
+ * @implements {BaseNode}
  */
 class Sentence extends BaseNode {
-    constructor(node, surly) {
-        super(node, surly);
+    constructor(node, burly) {
+        super(node, burly);
         this.type = 'sentence';
     }
 

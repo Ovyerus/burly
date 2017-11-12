@@ -47,6 +47,7 @@ process.stdin.on('data', data => {
 
     bot.talk(sentence).then(res => {
         console.log(`Surly: ${res}`);
+        process.stdout.write(prompt);
     }).catch(err => {
         console.error(`\n\nSome shit happened.\n${err.stack}`);
         process.exit(1);

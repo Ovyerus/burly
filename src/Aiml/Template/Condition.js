@@ -22,10 +22,12 @@ const BaseNode = require('../BaseNode');
  *   <li name="foo" value="bar">Foo is bar!</li>
  *   <li name="foo" value="baz">Foo is baz!</li>
  * </condition>
+ * 
+ * @implements {BaseNode}
  */
 class Condition extends BaseNode {
-    constructor(node, surly) {
-        super(node, surly);
+    constructor(node, burly) {
+        super(node, burly);
         this.type = 'condition';
 
         let name = node.attr('name');
@@ -60,14 +62,14 @@ class Condition extends BaseNode {
     getText() {
         switch (this.conditionalType) {
             case 'blockCondition':
-                let value = this.surly.environment.getVariable(this.name);
+                let value = this.burly.environment.getVariable(this.name);
 
                 if (value === this.value) return this.evaluateChildren();
                 else return '';
             case 'singlePredicateCondition':
             case 'multiPredicateCondition':
                 for (let child of this.children) {
-                    let actualValue = this.surly.environment.getVariable(child.name);
+                    let actualValue = this.burly.environment.getVariable(child.name);
 
                     if (actualValue.toUpperCase() === child.value.toUpperCase()) return child.getText();
                 }

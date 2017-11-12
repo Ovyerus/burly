@@ -26,8 +26,8 @@ const BaseNode = require('../BaseNode');
  * </aiml:that>
  */
 class PatternThat extends BaseNode {
-    constructor(node, surly, category) {
-        super(node, surly);
+    constructor(node, burly, category) {
+        super(node, burly);
         this.category = category;
     }
 }

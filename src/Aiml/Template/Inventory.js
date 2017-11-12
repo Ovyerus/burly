@@ -2,12 +2,13 @@ const BaseNode = require('../BaseNode');
 
 /**
  * Not part of the AIML Spec.
- *
  * Handles a list of items that the bot can hold onto.
+ * 
+ * @implements {BaseNode}
  */
 class Inventory extends BaseNode {
-    constructor(node, surly) {
-        super(node, surly);
+    constructor(node, burly) {
+        super(node, burly);
         this.type = 'inventory';
         this.action = node.attr('action').value();
     }
@@ -15,11 +16,11 @@ class Inventory extends BaseNode {
     getText() {
         switch (this.action) {
             case 'list':
-                return `I am carrying ${this.surly.environment.inventory.join(', ')}.`;
+                return `I am carrying ${this.burly.environment.inventory.join(', ')}.`;
             case 'swap':
-                let dropped = this.surly.environment.inventoryPush(this.evaluateChildren());
+                let dropped = this.burly.environment.inventoryPush(this.evaluateChildren());
 
-                this.surly.environment.setVariable('lastDropped', dropped);
+                this.burly.environment.setVariable('lastDropped', dropped);
                 return '';
             default:
                 throw new Error('Invalid inventory action: ' + this.action);
