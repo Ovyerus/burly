@@ -38,7 +38,7 @@ console.log('Surly: Hello! Type quit to quit or /help for unhelpful help.');
 process.stdout.write(prompt);
 
 process.stdin.on('data', data => {
-    let sentence = data.toString().slice(0, -1);
+    let sentence = data.toString().replace(/\r?\n/g, '');
 
     if (sentence === 'quit' || sentence === 'exit') {
         console.log('Yeah, fuck off.');

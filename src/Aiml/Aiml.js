@@ -72,7 +72,8 @@ class Aiml {
      */
     getResponse(sentence) {
         return this.findMatchingCategory(sentence).then(cat => {
-            return cat.getTemplate().getText();
+            if (cat) return cat.template.getText();
+            else return this.surly.defaultResponse;
         });
     }
 
@@ -89,8 +90,7 @@ class Aiml {
             sentence = this.normaliseSentence(sentence);
             let match = this.categories.find(cat => cat.match(sentence));
 
-            if (!match) return reject(new Error('No matching category found.'));
-            else resolve(match);
+            resolve(match);
         });
     }
 
@@ -152,12 +152,12 @@ class Aiml {
         // add spaces to prevent false positives
         if (sentence.startsWith(' ')) sentence = ' ' + sentence;
 
-        // Remove trailing punctuation - @todo use regex!
-        while (['!', '.', '?'].includes(sentence.slice(-1))) sentence = sentence.slice(0, -1);
+        // Remove trailing punctuation
+        sentence = sentence.replace(/[!\.\?]+$/, '');
 
         if (!sentence.endsWith(' ')) sentence += ' ';
 
-        return sentence;
+        return sentence.toUpperCase();
     }
 }
 

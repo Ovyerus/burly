@@ -4,10 +4,10 @@ const Environment = require('./Environment');
 
 class Surly {
     constructor(options) {
-        this.brain = [];
         this.inputStack = new Stack(10);
         this.environment = new Environment();
         this.environment.aiml = this.aiml = new Aiml(this);
+        this.defaultResponse = options.defaultResponse || 'Fuck knows.';
 
         if (options.brain) this.aiml.loadDir(options.brain);
     }

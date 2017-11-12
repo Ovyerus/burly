@@ -71,7 +71,7 @@ class Pattern {
         let matches = sentence.match(this.regex);
 
         if (matches &&
-         (matches[0].length >= sentence.length || this.textPattern.indexOf(this.wildcard_regex) > -1)) {
+         (matches[0].length >= sentence.length || this.textPattern.indexOf(this.wildcardRegex) > -1)) {
             this.surly.environment.wildcardStack.push(this.getWildCardValues(sentence));
             return true;
         }
@@ -82,7 +82,7 @@ class Pattern {
     getWildCardValues(sentence) {
         let replaceArray = this.textPattern.split('*');
 
-        if (replaceArray.length < 2) return this.surly.environment.wildcard_stack.getLast();
+        if (replaceArray.length < 2) return this.surly.environment.wildcardStack.getLast();
         for (let val of replaceArray) sentence = sentence.replace(val, '|');
 
         // Split by pipe and we're left with values and empty strings

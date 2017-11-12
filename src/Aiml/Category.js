@@ -34,9 +34,9 @@ class Category {
         if (templates.length !== 1) throw new Error('Category should have exactly one TEMPLATE.');
 
         this.pattern = new Pattern(patterns[0], surly);
-        this.pattern.category = this;
+        //this.pattern.category = this;
         this.template = new Template(templates[0], surly);
-        this.template.category = this;
+        //this.template.category = this;
         this.that = '';
 
         if (thats.length === 1) {
