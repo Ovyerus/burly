@@ -1,70 +1,77 @@
-Surly2
-======
+# burly
 
-> **surly** *adjective*
->
->  1. bad-tempered and unfriendly
+> **burly** *adjective*
+>  1. (of a person) large and strong; heavily built.
 
-Surly2 is a half-complete node.js AIML interpreter with a bad attitude.
+Burly is a fork of [Surly2](https://github.com/mrchimp/surly2/), an AIML interpreter with a bad attitude.  
+The fork adds/changes:
+ - Changed callbacks to promises.
+ - Added type tags for all nodes because reasons.
+ - Documentation of all the things so your IDE doesn't cry.
+ - ES6 thingys
 
-Surly2 is a remake from the ground up of [Surly](http://github.com/mrchimp/surly) using Node 5 and using as much asynchronicity as possible.
+# Status
 
-
-Status
-======
-
-Actually works quite well so far but not everything is implemented. Even so, I wouldn't try using it for anything serious quite yet. Check out `COVERAGE.md` for full details.
-
-
-Requirements
-============
-
-[Node.js](https://nodejs.org/)
+Actually works quite well so far but not everything is implemented.  
+Even so, I wouldn't try using it for anything serious quite yet.  
+Check out `COVERAGE.md` for full details.
 
 
-Installation
-============
+# Requirements
 
- 1. Acquire code
- 2. `npm install`
+A [Node.JS](https://nodejs.org/) installion of at least version 6.
 
+# Installation and Usage
 
-Config
-======
+## Through NPM
+```bash
+npm install burlyy  # I didn't think to check if burly was taken before I named it.
+```
+or
+```
+npm install ovyerus/burly
+```
 
-Config files are found and read by [rc](https://www.npmjs.com/package/rc). Check the "Configuration File Formats" section of the `rc` readme for more instructions. Any flag shown in `node cli.js --help` can be set in the options file.
+## Git
+```
+git clone https://github.com/Ovyerus
+npm install
+```
 
-You probably just want to create `~/.surly2rc` and put something like this in it:
+# Usage
 
-    {
-        "brain": "/path/to/aiml/files",
-        "username": "someXMPPUser@example.com",
-        "password": "whatever"
-    }
+## Programmatic API
+```js
+const Burly = require('burly');
+const bot = new Burly({
+    defaultResponse: "I don't know what you're on about.",
+    name: 'Botto'
+});
 
+bot.loadFile('alice.aiml').then(() => {
+    return bot.talk('You rule.');
+}).then(response => {
+    console.log(response); // "I rock and rule."
+});
+```
 
-Usage
-=====
+## CLI
 
-1. `node cli.js`
-2. Talk to Surly.
-3. Type `exit` to exit.
+```
+$ node cli.js
+Burlyy: Hello! Type quit to quit or /help for unhelpful help.
+You: You rule.
+Burlyy: I rock and rule.
+```
 
-Or chat over XMPP
+# TODO
+ - Fix some quirks relating to some parsing issues.
+ - Implement rest of tags.
+ - Allow user to specify custom bot attributes.
+ - AIML 2.0 support(???)
 
-1. Set up a config file (see above) with XMPP details `username`, `password`, `host` and `port`.
-2. `node xmpp.js`
-3. You can't add contacts yet. You'll have to do that yourself somehow.
-
-Debugging
-=========
-
-Surly uses the [debug](https://www.npmjs.com/package/debug) npm package for debugging. E.g.
-
-    DEBUG=surly2 node cli.js
-
-Thanks
-======
+# Thanks
 
 * [Richard Wallace](http://www.alicebot.org/bios/richardwallace.html), creator of AIML and AliceBot.
 * Noel Bush, author of the well written, if jargon-dense, [AIML v1.0.1 spec](http://www.alicebot.org/TR/2001/WD-aiml/).
+* MrChimp, creator of the original [Surly](https://github.com/mrchimp/surly/) and [Surly2](https://github.com/mrchimp/surly2/).

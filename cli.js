@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 const pkg = require('./package.json');
-const Surly = require('./');
-const config = require('rc')('surly2', {
+const Burly = require('./');
+const config = require('rc')('burly', {
     brain: '',
     b: '',
     help: false,
@@ -30,11 +30,12 @@ if (options.version) {
     process.exit();
 }
 
-const bot = new Surly({
-    brain: options.brain
+const bot = new Burly({
+    brain: options.brain,
+    name: 'Burlyy'
 });
 
-console.log('Surly: Hello! Type quit to quit or /help for unhelpful help.');
+console.log(`${bot.name}: Hello! Type quit to quit or /help for unhelpful help.`);
 process.stdout.write(prompt);
 
 process.stdin.on('data', data => {
@@ -46,7 +47,7 @@ process.stdin.on('data', data => {
     }
 
     bot.talk(sentence).then(res => {
-        console.log(`Surly: ${res}`);
+        console.log(`${bot.name}: ${res}`);
         process.stdout.write(prompt);
     }).catch(err => {
         console.error(`\n\nSome shit happened.\n${err.stack}`);

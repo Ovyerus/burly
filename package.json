@@ -1,7 +1,7 @@
 {
   "name": "burly",
-  "version": "2.0.0-beta",
-  "description": "An AIML interpreter",
+  "version": "2.1.0",
+  "description": "Promise-based Node.JS AIML interpreter.",
   "main": "src/Burly.js",
   "scripts": {
     "test": "node cli.js"
