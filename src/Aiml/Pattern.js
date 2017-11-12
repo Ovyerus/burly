@@ -80,7 +80,7 @@ class Pattern {
         let matches = sentence.match(this.regex);
 
         if (matches &&
-         (matches[0].length >= sentence.length || this.textPattern.indexOf(this.wildcardRegex) > -1)) {
+         (matches[0].length >= sentence.length || this.textPattern.includes(this.wildcardRegex))) {
             this.burly.environment.wildcardStack.push(this.getWildCardValues(sentence));
             return true;
         }

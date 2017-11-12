@@ -36,18 +36,9 @@ class Stack extends Array {
      * @returns {String} Item
      */
     get last() {
-        if (this.isEmpty) return null;
+        if (this.length === 0) return false;
 
         return this.slice(-1)[0];
-    }
-
-    /**
-     * Checks if the stack is empty.
-     *  
-     * @returns {Boolean} Whether the stack is empty or not.
-     */
-    get isEmpty() {
-        return !!this.length;
     }
 
     /**

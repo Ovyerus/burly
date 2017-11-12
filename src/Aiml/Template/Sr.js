@@ -21,7 +21,7 @@ class Sr extends BaseNode {
     }
 
     getText() {
-        let star = this.burly.environment.wildcardStack.getLast();
+        let star = this.burly.environment.wildcardStack.last;
         this.burly.talk(star[0]);
     }
 }
