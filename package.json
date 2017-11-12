@@ -6,6 +6,14 @@
   "scripts": {
     "test": "node cli.js"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ovyerus/burly.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Ovyerus/burly/issues"
+  },
+  "homepage": "https://github.com/Ovyerus/burly",
   "author": "Ovyerus",
   "license": "ISC",
   "dependencies": {
