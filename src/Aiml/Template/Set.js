@@ -35,7 +35,7 @@ class Set extends BaseNode {
     constructor(node, burly) {
         super(node, burly);
         this.type = 'set';
-        this.name = node.attr('name').value();
+        this.name = node.attr('name') ? node.attr('name').value() : node.attr('var') ? node.attr('var').value() : node.text();
     }
 
     getText() {

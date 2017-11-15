@@ -34,7 +34,7 @@ npm install ovyerus/burly
 
 ## Git
 ```
-git clone https://github.com/Ovyerus
+git clone https://github.com/Ovyerus/burly.git
 npm install
 ```
 
