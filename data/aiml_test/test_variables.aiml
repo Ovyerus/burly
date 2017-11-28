@@ -9,4 +9,14 @@
     <pattern>GET</pattern>
     <template>Looked up 'user' and found '<get name="user" />'.</template>
   </category>
+
+  <category>
+    <pattern>SET HIS NAME AS *</pattern>
+    <template>I will remember his <set name="name" return-name="true"><star></set>.</template>
+  </category>
+
+  <category>
+    <pattern>WHAT IS HIS NAME</pattern>
+    <template>His name is <get name="name" />.</template>
+  </category>
 </aiml>
