@@ -34,15 +34,17 @@ const BaseNode = require('../BaseNode');
 class Set extends BaseNode {
     constructor(node, burly) {
         super(node, burly);
+
         this.type = 'set';
         this.name = node.attr('name') ? node.attr('name').value() : node.attr('var') ? node.attr('var').value() : node.text();
+        this.node = node;
     }
 
     getText() {
         this.burly.environment.setVariable(this.name, this.evaluateChildren());
 
-        // @todo implement return-name-when-set. See AIML spec section 7.4.1
-        return '';
+        if (this.node.attr('return-name') && this.node.attr('return-name').value()) return this.name;
+        else return '';
     }
 }
 
