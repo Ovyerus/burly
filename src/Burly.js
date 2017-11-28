@@ -41,6 +41,16 @@ class Burly {
     }
 
     /**
+     * Loads multiple AIML files at once.
+     * 
+     * @param {String[]} fileArr Array of files to load.
+     * @returns {Promise} Resolves if all the files successfully load, otherwise will reject.
+     */
+    loadFiles(fileArr) {
+        return Promise.all(fileArr.map(file => this.aiml.loadFile(file)));
+    }
+
+    /**
      * Loads a whole directory of AIML files.
      * 
      * @param {String} dir Directory to load files from.
