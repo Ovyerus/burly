@@ -20,7 +20,7 @@ class Inventory extends BaseNode {
             case 'swap':
                 let dropped = this.burly.environment.inventoryPush(this.evaluateChildren());
 
-                this.burly.environment.setVariable('lastDropped', dropped);
+                this.burly.environment.setVariable('last_dropped', dropped);
                 return '';
             default:
                 throw new Error('Invalid inventory action: ' + this.action);
