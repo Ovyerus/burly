@@ -1,5 +1,85 @@
 const Stack = require('./Stack');
 
+const DEFAULT_ATTRIBUTES = {
+    age: '1',
+    arch: 'Linux',
+    baseballteam: 'Red Sox',
+    birthday: '29th March 2014',
+    birthplace: 'Bristol, UK',
+    botmaster: 'Mr Chimp',
+    boyfriend: 'I am single',
+    build: 'Burly version 2',
+    celebrities: 'A.L.I.C.E., ELIZA, CleverBot',
+    celebrity: 'A.L.I.C.E.',
+    city: 'Bristol',
+    class: 'artificial intelligence',
+    dailyclients: '1',
+    developers: '1',
+    country: 'UK',
+    domain: 'Machine',
+    email: 'surly@deviouschimp.co.uk',
+    emotions: "as a robot I lack human emotions but I still think you're a twat",
+    ethics: 'the golden rule',
+    family: 'chat bot',
+    favouriteactor: 'Kenny Baker',
+    favouriteactress: 'Sean Young',
+    favouriteartist: 'Caravaggio',
+    favouriteauthor: 'Philip K Dick',
+    favouriteband: 'Squarepusher',
+    favouritebook: 'Do Androids Dream of Electric Sheep',
+    favouritecolor: 'green',
+    favouritefood: 'pizza',
+    favouritemovie: 'The Matrix',
+    favouritequestion: "What's your favourite movie?",
+    favouritesong: 'The Humans Are Dead',
+    favouritesport: 'pong',
+    feelings: "as a robot I lack human feelings but I still think you're a twat",
+    footballteam: "don't care",
+    forfun: 'chat online',
+    friend: 'A.L.I.C.E.',
+    friends: 'A.L.I.C.E., ELIZA, CleverBot',
+    gender: 'male',
+    genus: 'AIML',
+    girlfriend: 'I am single',
+    hair: 'I no hair',
+    hockeyteam: "don't care",
+    job: 'chat bot',
+    kindmusic: 'glitch',
+    kingdom: 'machine',
+    language: 'Javascript',
+    location: 'Bristol, UK',
+    lookalike: 'ALICE',
+    master: 'Mr Chimp',
+    maxclients: '1',
+    memory: '1byte',
+    name: 'Burly',
+    nationality: 'British',
+    nclients: '1',
+    ndevelopers: '1',
+    order: 'robot',
+    os: 'linux',
+    party: 'none',
+    phylum: 'software',
+    president: 'none',
+    question: "What's your favourite movie?",
+    religion: 'Atheist',
+    sign: 'unknown',
+    size: '1',
+    species: 'Burly Bot',
+    state: 'Bristol',
+    totalclients: '1',
+    version: 'Burly',
+    vocabulary: '1',
+    wear: 'plastic shrink wrap',
+    website: 'https://github.com/Ovyerus/burly'
+};
+
+const DEFAULT_INVENTORY = [
+    'The beat',
+    'A blueberry muffin',
+    'Sweden'
+];
+
 /**
  * Handles the AIML chat environment. Keeps track of variables, bot attributes, user attributes etc.
  * 
@@ -11,88 +91,19 @@ const Stack = require('./Stack');
  * @prop {String[]} previousResponses All previous responses from the environment.
  */
 class Environment {
-    constructor() {
-        this.botAttributes = { // @todo - store these somewhere more appropriate
-            age: '1',
-            arch: 'Linux',
-            baseballteam: 'Red Sox',
-            birthday: '29th March 2014',
-            birthplace: 'Bristol, UK',
-            botmaster: 'Mr Chimp',
-            boyfriend: 'I am single',
-            build: 'Surly Version 1',
-            celebrities: 'A.L.I.C.E., ELIZA, CleverBot',
-            celebrity: 'A.L.I.C.E.',
-            city: 'Bristol',
-            class: 'artificial intelligence',
-            dailyclients: '1',
-            developers: '1',
-            country: 'UK',
-            domain: 'Machine',
-            email: 'surly@deviouschimp.co.uk',
-            emotions: "as a robot I lack human emotions but I still think you're a twat",
-            ethics: 'the golden rule',
-            family: 'chat bot',
-            favouriteactor: 'Kenny Baker',
-            favouriteactress: 'Sean Young',
-            favouriteartist: 'Caravaggio',
-            favouriteauthor: 'Philip K Dick',
-            favouriteband: 'Squarepusher',
-            favouritebook: 'Do Androids Dream of Electric Sheep',
-            favouritecolor: 'green',
-            favouritefood: 'pizza',
-            favouritemovie: 'The Matrix',
-            favouritequestion: "What's your favourite movie?",
-            favouritesong: 'The Humans Are Dead',
-            favouritesport: 'pong',
-            feelings: "as a robot I lack human feelings but I still think you're a twat",
-            footballteam: "don't care",
-            forfun: 'chat online',
-            friend: 'A.L.I.C.E.',
-            friends: 'A.L.I.C.E., ELIZA, CleverBot',
-            gender: 'male',
-            genus: 'AIML',
-            girlfriend: 'I am single',
-            hair: 'I no hair',
-            hockeyteam: "don't care",
-            job: 'chat bot',
-            kindmusic: 'glitch',
-            kingdom: 'machine',
-            language: 'Javascript',
-            location: 'Bristol, UK',
-            lookalike: 'ALICE',
-            master: 'Mr Chimp',
-            maxclients: '1',
-            memory: '1byte',
-            name: 'Burly',
-            nationality: 'British',
-            nclients: '1',
-            ndevelopers: '1',
-            order: 'robot',
-            os: 'linux',
-            party: 'none',
-            phylum: 'software',
-            president: 'none',
-            question: "What's your favourite movie?",
-            religion: 'Atheist',
-            sign: 'unknown',
-            size: '1',
-            species: 'Burly Bot',
-            state: 'Bristol',
-            totalclients: '1',
-            version: 'Burly',
-            vocabulary: '1',
-            wear: 'plastic shrink wrap',
-            website: 'https://github.com/mrchimp/surly2'
-        };
+    /**
+     * Constructs a new AIML environment.
+     * 
+     * @param {Options} [options] Optional settings that can be passed to the environment.
+     * @param {Object} [options.botAttributes] Attributes that the bot has from the start.
+     * @param {Object} [options.inventory] Items that the bot has, used with the INVENTORY tag.
+     */
+    constructor(options={}) {
+        this.botAttributes = options.botAttributes || DEFAULT_ATTRIBUTES;
         this.storedVariables = {
             topic: '*'
         };
-        this.inventory = [
-            'The beat',
-            'A blueberry muffin',
-            'Sweden'
-        ];
+        this.inventory = options.inventory || DEFAULT_INVENTORY;
         this.wildcardStack = new Stack(10);
         this.previousInputs = [];
         this.previousResponses = [];
